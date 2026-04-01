@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EchoSight Ultimate — AI Vision</title>
+    <title>EchoSight — Точное зрение</title>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -11,8 +11,8 @@
 <body>
     <div class="app-container">
         <header>
-            <div class="logo">ECHOSIGHT ULTIMATE</div>
-            <div id="status-indicator"><span class="dot"></span> <span id="status-text">Инициализация нейросетей...</span></div>
+            <div class="logo">ECHOSIGHT </div>
+            <div id="status-indicator"><span id="status-text">Загрузка ИИ...</span></div>
         </header>
 
         <div class="viewport">
@@ -22,13 +22,12 @@
         </div>
         
         <div class="interface">
-            <div class="result-display">
-                <p id="output-text">Система готова к глубокому анализу</p>
+            <div id="result-box">
+                <p id="output-text">Наведите камеру на объект или купюру</p>
             </div>
-            
             <div class="button-grid">
-                <button id="obj-btn" class="action-btn">🔍 Узнать предмет</button>
-                <button id="text-btn" class="action-btn">💵 Сомы / Текст</button>
+                <button id="obj-btn" class="main-btn">ЧТО ПЕРЕДО МНОЙ?</button>
+                <button id="text-btn" class="main-btn">УЗНАТЬ НОМИНАЛ</button>
             </div>
         </div>
     </div>
