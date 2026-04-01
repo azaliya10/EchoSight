@@ -1,38 +1,5 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EchoSight Ultra v2.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="app-shell">
-        <header>
-            <div class="brand">ECHOSIGHT<span>ULTRA</span></div>
-            <div id="ai-status"><span class="pulse"></span> СИСТЕМА ИНИЦИАЛИЗИРУЕТСЯ...</div>
-        </header>
-
-        <div class="camera-container">
-            <video id="video" autoplay playsinline></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <div class="scanner-line"></div>
-            <button id="torch-btn" class="icon-btn">🔦</button>
-        </div>
-
-        <div class="ui-panel">
-            <div class="display-glass">
-                <p id="output-text">ОЖИДАНИЕ СКАНЕРОВАНИЯ</p>
-            </div>
-            <div class="control-grid">
-                <button id="obj-btn" class="btn-primary">ГЛУБОКИЙ АНАЛИЗ (1000+)</button>
-                <button id="text-btn" class="btn-primary">УЗНАТЬ СОМЫ</button>
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+<div class="grid-btns">
+    <button id="color-btn" class="btn">Узнать цвет</button>
+    <button id="money-btn" class="btn">Деньги</button>
+    <button id="geo-btn" class="btn btn-geo">📍 Где я сейчас?</button>
+</div>
