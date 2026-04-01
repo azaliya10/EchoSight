@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A11y Vision - Помощник для незрячих</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>A11y Vision</h1>
+        <p>Наведите камеру на текст и сделайте фото</p>
+        
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+        
+        <div class="controls">
+            <button id="capture-btn">Прочитать текст вслух</button>
+        </div>
+
+        <div id="status">Статус: Готов к работе</div>
+        <div id="result-text"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
