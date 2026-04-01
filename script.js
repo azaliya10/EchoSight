@@ -2,16 +2,25 @@ const video = document.getElementById('video');
 const statusText = document.getElementById('status-text');
 const output = document.getElementById('output-text');
 const scanLine = document.getElementById('scan-line');
-let classifier; // Используем мощный ImageNet классификатор
+let objectDetector;
 
-// Словарь для перевода самых частых из 1000+ категорий
-const translateMap = {
-    'person': 'человек', 'sunglasses': 'солнцезащитные очки', 'spectacles': 'очки',
-    'cellular telephone': 'мобильный телефон', 'laptop': 'ноутбук', 'skate': 'скейтборд',
-    'water bottle': 'бутылка воды', 'coffee mug': 'кружка', 'backpack': 'рюкзак',
-    'door': 'дверь', 'window shade': 'шторы/жалюзи', 'wall clock': 'настенные часы',
-    't-shirt': 'футболка', 'jeans': 'джинсы', 'sneaker': 'кроссовок', 'suit': 'костюм',
-    'guinea pig': 'морская свинка', 'golden retriever': 'собака', 'tabby': 'кошка'
+// Огромный словарь объектов (Улица + Дом + Личные вещи)
+const translations = {
+    'person': 'человек', 'bicycle': 'велосипед', 'car': 'машина', 'motorcycle': 'мотоцикл',
+    'bus': 'автобус', 'truck': 'грузовик', 'traffic light': 'светофор', 'stop sign': 'знак стоп',
+    'bench': 'скамейка', 'dog': 'собака', 'cat': 'кошка', 'backpack': 'рюкзак', 'umbrella': 'зонт',
+    'handbag': 'сумка', 'tie': 'галстук', 'suitcase': 'чемодан', 'frisbee': 'диск', 'skis': 'лыжи',
+    'snowboard': 'сноуборд', 'sports ball': 'мяч', 'kite': 'воздушный змей', 'baseball bat': 'бита',
+    'bottle': 'бутылка', 'wine glass': 'бокал', 'cup': 'чашка', 'fork': 'вилка', 'knife': 'нож',
+    'spoon': 'ложка', 'bowl': 'миска', 'banana': 'банан', 'apple': 'яблоко', 'sandwich': 'сэндвич',
+    'orange': 'апельсин', 'broccoli': 'брокколи', 'carrot': 'морковь', 'hot dog': 'хот-дог',
+    'pizza': 'пицца', 'donut': 'пончик', 'cake': 'торт', 'chair': 'стул', 'couch': 'диван',
+    'potted plant': 'растение', 'bed': 'кровать', 'dining table': 'стол', 'toilet': 'унитаз',
+    'tv': 'телевизор', 'laptop': 'ноутбук', 'mouse': 'мышка', 'remote': 'пульт', 'keyboard': 'клавиатура',
+    'cell phone': 'телефон', 'microwave': 'микроволновка', 'oven': 'печь', 'sink': 'раковина',
+    'refrigerator': 'холодильник', 'book': 'книга', 'clock': 'часы', 'vase': 'ваза', 'scissors': 'ножницы',
+    'teddy bear': 'мишка', 'hair drier': 'фен', 'toothbrush': 'зубная щетка', 'glasses': 'очки',
+    'spectacles': 'очки', 'door': 'дверь', 'window': 'окно', 'skateboard': 'скейтборд'
 };
 
 async function init() {
@@ -20,14 +29,10 @@ async function init() {
             video: { facingMode: 'environment', width: { ideal: 1280 } } 
         });
         video.srcObject = stream;
-        
-        statusText.innerText = "Загрузка базы данных (1000+ объектов)...";
-        // Загружаем MobileNet — она знает всё: от очков до видов деревьев
-        classifier = await ml5.imageClassifier('MobileNet', video);
-        statusText.innerText = "EchoSight Ultimate: Активен";
-    } catch (e) {
-        statusText.innerText = "Ошибка доступа к камере";
-    }
+        statusText.innerText = "Загрузка нейросети...";
+        objectDetector = await ml5.objectDetector('cocossd');
+        statusText.innerText = "EchoSight Pro: Готов";
+    } catch (e) { statusText.innerText = "Ошибка камеры"; }
 }
 
 function speak(text) {
@@ -37,28 +42,21 @@ function speak(text) {
     window.speechSynthesis.speak(utterance);
 }
 
-// РАСПОЗНАВАНИЕ 500+ ПРЕДМЕТОВ (Человек, очки, одежда и т.д.)
+// 1. УЗНАТЬ ПРЕДМЕТ (Ложка, Человек, Очки и т.д.)
 document.getElementById('obj-btn').addEventListener('click', () => {
     scanLine.style.display = 'block';
-    output.innerText = "Анализирую детали...";
-
-    classifier.classify((err, results) => {
+    objectDetector.detect(video, (err, results) => {
         scanLine.style.display = 'none';
         if (results && results.length > 0) {
-            // Берем первый результат с высокой точностью
-            let rawName = results[0].label.split(',')[0].toLowerCase();
-            let russianName = translateMap[rawName] || rawName;
-            
-            let message = "Это похоже на " + russianName;
-            output.innerText = message;
-            speak(message);
-        } else {
-            speak("Не могу определить предмет");
-        }
+            let found = results.filter(i => i.confidence > 0.4).map(i => translations[i.label] || i.label);
+            let unique = [...new Set(found)];
+            let res = unique.length > 0 ? "Вижу: " + unique.join(", ") : "Не уверена";
+            output.innerText = res; speak(res);
+        } else { speak("Ничего не вижу"); }
     });
 });
 
-// РАСПОЗНАВАНИЕ СОМОВ (С цветовым анализом и поиском цифр)
+// 2. УЗНАТЬ ДЕНЬГИ (Точная логика)
 document.getElementById('text-btn').addEventListener('click', async () => {
     scanLine.style.display = 'block';
     const canvas = document.getElementById('canvas');
@@ -67,28 +65,39 @@ document.getElementById('text-btn').addEventListener('click', async () => {
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0);
 
-    // Считываем текст
-    const { data: { text } } = await Tesseract.recognize(canvas, 'rus+eng');
-    const lowText = text.toLowerCase();
-    scanLine.style.display = 'none';
+    try {
+        const { data: { text } } = await Tesseract.recognize(canvas, 'rus+eng');
+        scanLine.style.display = 'none';
+        
+        // Очищаем текст от мусора, оставляем только цифры и пробелы
+        const cleanText = text.replace(/[^0-9\s]/g, ' ');
+        const words = cleanText.split(/\s+/);
+        
+        let finalNominal = "";
+        
+        // Ищем точное совпадение (от больших к меньшим)
+        if (words.includes('5000')) finalNominal = "Пять тысяч сом";
+        else if (words.includes('2000')) finalNominal = "Две тысячи сом";
+        else if (words.includes('1000')) finalNominal = "Одна тысяча сом";
+        else if (words.includes('500')) finalNominal = "Пятьсот сом";
+        else if (words.includes('200')) finalNominal = "Двести сом";
+        else if (words.includes('100')) finalNominal = "Сто сом";
+        else if (words.includes('50')) finalNominal = "Пятьдесят сом";
+        else if (words.includes('20')) finalNominal = "Двадцать сом";
 
-    let result = "";
-    if (lowText.includes('5000')) result = "Пять тысяч сом";
-    else if (lowText.includes('2000')) result = "Две тысячи сом";
-    else if (lowText.includes('1000') || lowText.includes('миң')) result = "Одна тысяча сом";
-    else if (lowText.includes('500')) result = "Пятьсот сом";
-    else if (lowText.includes('200')) result = "Двести сом";
-    else if (lowText.includes('100') || lowText.includes('жүз')) result = "Сто сом";
-    else if (lowText.includes('50')) result = "Пятьдесят сом";
-    else if (lowText.includes('20')) result = "Двадцать сом";
-
-    if (result) {
-        output.innerText = result; speak(result);
-    } else if (text.trim().length > 3) {
-        output.innerText = text; speak(text);
-    } else {
-        speak("Попробуйте еще раз");
-    }
+        if (finalNominal) {
+            output.innerText = finalNominal; speak(finalNominal);
+        } else {
+            // Если цифр нет, ищем по кыргызским словам
+            const lowText = text.toLowerCase();
+            if (lowText.includes('миң')) speak("Одна тысяча сом");
+            else if (lowText.includes('жүз')) speak("Сто сом");
+            else {
+                output.innerText = "Не удалось распознать номинал";
+                speak("Попробуйте еще раз");
+            }
+        }
+    } catch (e) { scanLine.style.display = 'none'; }
 });
 
 init();
