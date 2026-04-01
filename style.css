@@ -1,46 +1,93 @@
-body {
-    background-color: #0f0f0f;
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+:root {
+    --bg-color: #000000;
+    --accent-color: #ffffff;
+    --text-gray: #888888;
 }
 
-.container {
+body {
+    background-color: var(--bg-color);
+    color: var(--accent-color);
+    font-family: 'Inter', -apple-system, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0;
     text-align: center;
-    width: 90%;
-    max-width: 400px;
+}
+
+#status {
+    font-size: 0.8rem;
+    color: var(--text-gray);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.video-wrapper {
+    flex-grow: 1;
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid #333;
 }
 
 video {
     width: 100%;
-    border-radius: 20px;
-    border: 2px solid #333;
-    margin-bottom: 20px;
+    height: 100%;
+    object-fit: cover;
 }
 
-button {
-    background-color: #ffffff;
-    color: #000000;
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.main-btn {
+    background: var(--accent-color);
+    color: var(--bg-color);
     border: none;
-    padding: 15px 30px;
-    font-size: 18px;
+    padding: 20px;
+    border-radius: 16px;
     font-weight: bold;
-    border-radius: 50px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s ease;
 }
 
-button:active {
+.main-btn:active {
     transform: scale(0.95);
-    background-color: #ccc;
 }
 
-#status {
-    margin-top: 15px;
-    font-size: 0.9em;
-    color: #888;
+#result-box {
+    background: #111;
+    padding: 15px;
+    border-radius: 12px;
+    min-height: 60px;
+    text-align: center;
+}
+
+#output-text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
 }
