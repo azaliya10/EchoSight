@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EchoSight — AI Vision</title>
+    <title>EchoSight Pro — AI Accessibility</title>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -11,22 +11,31 @@
 <body>
     <div class="app-container">
         <header>
-            <h1>EchoSight</h1>
-            <div id="status">Загрузка ИИ...</div>
+            <div class="logo">ECHOSIGHT</div>
+            <div id="status-indicator"><span class="dot"></span> <span id="status-text">Загрузка систем...</span></div>
         </header>
 
-        <div class="video-wrapper">
+        <div class="viewport">
             <video id="video" autoplay playsinline></video>
             <canvas id="canvas" style="display:none;"></canvas>
+            <div id="scan-line"></div>
         </div>
         
-        <div class="controls">
-            <button id="text-btn" class="main-btn">Читать текст</button>
-            <button id="obj-btn" class="main-btn">Что перед мной?</button>
-        </div>
-
-        <div id="result-box">
-            <p id="output-text">Нажмите кнопку, чтобы начать</p>
+        <div class="interface">
+            <div class="result-display">
+                <p id="output-text">Система готова. Наведите камеру.</p>
+            </div>
+            
+            <div class="button-grid">
+                <button id="obj-btn" class="action-btn">
+                    <span class="icon">🔍</span>
+                    Окружение
+                </button>
+                <button id="text-btn" class="action-btn">
+                    <span class="icon">💵</span>
+                    Деньги / Текст
+                </button>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
